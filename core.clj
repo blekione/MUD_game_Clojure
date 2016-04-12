@@ -18,7 +18,7 @@
        (= input :quit) "bye bye"
        (some #(= input %) '(:north :south :east :west) )
        (let [direction (lookup rid input)]
-         (if (= 0 direction)
+         (if (= :0 direction)
            (recur rid)
            (recur direction)))
        :else (do

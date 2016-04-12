@@ -21,5 +21,7 @@
          (if (= 0 direction)
            (recur rid)
            (recur direction)))
-       :else (recur input))      
-      ))) 
+       :else (do
+               (print "uh! I don't understand. Stil, ")
+               (recur rid)))      
+      )))

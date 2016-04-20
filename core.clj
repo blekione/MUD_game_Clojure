@@ -11,6 +11,8 @@
 (defn lookup [room-id direction]
  (get (get directions room-id ) direction))
 
+
+;; function to start game
 (defn startgame [room-id]
   (loop [rid room-id]
     (println (clojure.string/join " "(get descriptions rid)))
@@ -31,25 +33,14 @@
 (defn command []
   (loop []
      (let [input (read-line)
-        string-tokens (string/split input #" ")
-        tokens (map keyword string-tokens)
-        cmd (first tokens)]
-      (cond
-       ;; explain the commands
-       (= cmd :help)(do
-                      (println (format "Usage:\nsearch <term>\nquit\n") )
-                      (recur)
-                      )
-       ;; break the loop
-       (= cmd :quit) (println "bye bye")
-       ;; do something
-       (= cmd :search) (do
-                        (println (format "Searching for %s...\n" (string/join " " (rest string-tokens))))
-                        (recur))
-       ;; handle unknow input
-       :else (do
-              (println "Huh?\n")
-              (recur))
-     )
-    ))
- )
+           string-tokens (string/split input #" ")
+           tokens (map keyword string-tokens)
+           cmd (first tokens)
+           reply (case cmd
+                   :help "Usage:\nsearch <term>\nquit"
+                   :quit "bye bye"
+                   :search (format "Searching for %s..." (string/join " " (rest string-tokens)))
+                   "Huh?")]
+       (println reply)
+       (when-not (= :quit cmd)
+         (recur)))))

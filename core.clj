@@ -1,4 +1,5 @@
 (ns fun-pro.core)
+(require ['clojure.string :as 'string])
 
 (def descriptions { :1 '(you are in the living room)
                     :2 '(you are in the hallway)
@@ -25,3 +26,30 @@
                (print "uh! I don't understand. Stil, ")
                (recur rid)))      
       )))
+
+;; simple command-line processor
+(defn command []
+  (loop []
+     (let [input (read-line)
+        string-tokens (string/split input #" ")
+        tokens (map keyword string-tokens)
+        cmd (first tokens)]
+      (cond
+       ;; explain the commands
+       (= cmd :help)(do
+                      (println (format "Usage:\nsearch <term>\nquit\n") )
+                      (recur)
+                      )
+       ;; break the loop
+       (= cmd :quit) (println "bye bye")
+       ;; do something
+       (= cmd :search) (do
+                        (println (format "Searching for %s...\n" (string/join " " (rest string-tokens))))
+                        (recur))
+       ;; handle unknow input
+       :else (do
+              (println "Huh?\n")
+              (recur))
+     )
+    ))
+ )

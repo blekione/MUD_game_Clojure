@@ -8,19 +8,17 @@
                    })
 
 
-(def look {"directions" :look
-           "look" :look
-           "examine room" :look
+(def look {:directions :look
+           :look :look
+           :examine :look
            })
 
-(def quit {"exit game" :quit
-           "quit game" :quit
-           "exit" :quit
-           "quit" :quit
+(def quit {:exit :quit
+           :quit :quit
            })
 
-(def decisiontable {:1 {:north 1, :west 3}
-                    :2 {:south 1}
+(def decisiontable {:1 {:north :2, :west :3}
+                    :2 {:south :1}
                     :3 {}})
 
 (def actions (merge look quit))
@@ -46,38 +44,52 @@
         result (filter #(check-if-direction (first %)) record)
         n (count result)]
     (case n
-      0 (println "You appear to have entered a room with no exits.")
-      1 (println (format "You can see an exit to the %s" (name (first (first result)))))
+      0 (println "You appear to have entered a room with no exits.>")
+      1 (println (format "You can see an exit to the %s>" (name (first (first result)))))
       (let [lst-of-keywords (map first result)
             lst-of-strings (map name lst-of-keywords)]
-        (println (str "You can see exits to the " (string/join " and " lst-of-strings)))))
+        (println (str "You can see exits to the " (string/join " and " lst-of-strings) ">"))))
     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; returns list of keywords from decisiontable "attached" to id 
+(defn get-keywords [id]
+  (let [keys (get final-decision-table id)]
+    (map (fn [key] (first key)) keys)))
 
+;; lookup if decision-table contains any tokens and returns associated value
+(defn lookup-clojure [id tokens]
+  (let [set-value (into #{} (get-keywords id))
+           tokens (into #{} (map keyword tokens))
+           set (clojure.set/intersection tokens set-value)]
+    (cond 
+      (or (empty? set) (> (count set) 1)) :false  
+      :else (get (get final-decision-table id) (first set)))))
 
-(def directions {:1 {:north :2, :south :0, :east :0, :west :0}
-                 :2 {:north :0, :south :1, :east :0, :west :0}})
+(defn String->Number [str]
+  (let [n (read-string str)]
+       (if (number? n) n nil)))
 
-;; check which direction are available
-(defn lookup [room-id direction]
- (get (get directions room-id ) direction))
-
-
-;; function to start game
-(defn startgame [room-id]
-  (loop [rid room-id]
-    (println (clojure.string/join " "(get descriptions rid)))
-    (let [input (keyword (read-line))]
-      (cond
-       (= input :quit) "bye bye"
-       (some #(= input %) '(:north :south :east :west) )
-       (let [direction (lookup rid input)]
-         (if (= :0 direction)
-           (recur rid)
-           (recur direction)))
-       :else (do
-               (print "uh! I don't understand. Stil, ")
-               (recur rid)))      
-      )))
+(defn startgame-1 [initial-id]
+  (loop [id initial-id description true]
+    (if description
+      (println (str (clojure.string/join " "(get descriptions id)) "> ") ))
+      (let [input (read-line)
+            tokens (string/split input #" ")
+            response (lookup-clojure id tokens)
+            reply (cond
+                   (= response :false)
+                     "I dont understand>"            
+                   (= response :look)
+                     (get-directions id) 
+                   (= response :quit)
+                     "So Long, and Thanks for All the Fish...>")]
+        (if (not= reply nil)
+          (println reply))
+        (cond 
+            (number? (String->Number (name response)))
+              (recur response true)
+            (not= response :quit)
+              (recur id false))
+        )))

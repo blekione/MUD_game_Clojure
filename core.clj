@@ -7,7 +7,6 @@
 
 (defn check-if-direction [value]
   (some #(= value %) '(:north :south :east :west)))
-
 (defn get-directions [id]
   (let [record (get final-decision-table id)
         result (filter #(check-if-direction (first %)) record)

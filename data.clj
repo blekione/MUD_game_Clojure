@@ -52,3 +52,37 @@
 (def final-decision-table
   (list-to-map merged-tables))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; maps for player inventory  and associated functions to work with it
+
+(def inventory-db {})
+
+;; function to create mutable maps for each room with use of references
+
+(defn create-object-db [input-coll]
+  (loop [x 1]
+    (intern *ns* (symbol (str "room" x "-db")) (ref {}) )
+    (when (< x (count input-coll))
+      (recur (+ x 1)))))
+
+;; adds items from defined list of objects to room-object-db
+
+(defn add-item-to-room [room-db item-id]
+  (let [size (count (deref room-db))
+        item-key (keyword (str (+ size 1)))]
+    (dosync (alter room-db assoc item-key item-id))
+    ))
+
+;; adds up to 4 random items from the list to the room-db
+
+(defn add-items [room-db]
+  (loop [x (rand-int 4) items-keys (keys objects) ]
+    (when (> x 0)
+      (let [random-item (rand-nth items-keys)]
+        (print (str "item: " random-item))
+        (add-item-to-room room-db random-item)
+        (recur (- x 1)
+               (remove #{random-item} (keys objects))))
+     ))
+  @room-db) 

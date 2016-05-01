@@ -62,9 +62,10 @@
 
 (defn create-object-db [input-coll]
   (loop [x 1]
-    (intern *ns* (symbol (str "room" x "-db")) (ref {}) )
-    (when (< x (count input-coll))
-      (recur (+ x 1)))))
+    (intern *ns* (symbol (str "room" x "-db")) (ref {:room true}) )
+    (if (< x (count input-coll))
+      (recur (+ x 1))
+      (intern *ns* (symbol (str "inventory-db")) (ref {:room false}) ))))
 
 ;; adds items from defined list of objects to room-object-db
 

@@ -87,3 +87,16 @@
                (remove #{random-item} (keys objects))))
      ))
   @room-db) 
+
+;; display objects from mutable maps
+
+(defn display-objects [db]
+  (let [db-objects-keys (rest (vals @inventory-db))
+        output-no-first (clojure.string/join ", " (map #(get objects %) (rest db-objects-keys)))
+        output (if (> (count db-objects-keys) 1)
+                 (str output-no-first " and " (get objects (first db-objects-keys)) )
+                 (get objects (first db-objects-keys)))]
+    (when (not-empty output)
+      (if (get db :room)
+        (println (str "You can see " output))
+        (println (str "You are carrying " output))))))

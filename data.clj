@@ -75,6 +75,10 @@
     (dosync (alter room-db assoc item-key item-id))
     ))
 
+(defn remove-item-from-room [room-db item-key]
+  (dosync (alter room-db dissoc item-key)))
+
+
 ;; adds up to 4 random items from the list to the room-db
 
 (defn add-items [room-db]
@@ -100,3 +104,27 @@
       (if (get db :room)
         (println (str "You can see " output))
         (println (str "You are carrying " output))))))
+
+;; moving item from room to inventory
+
+(defn move-from-room-to-inventory [db id]
+  (let [object-id (get (deref db) id)
+        object-des (get objects object-id)]
+    (cond
+     (contains? (deref db) id)
+      (do
+       (println "Added" object-des "to your bag")
+       (add-item-to-room inventory-db object-id)
+       (remove-item-from-room db id))
+     :else (println "I don't see that item in the room!"))))
+
+(defn move-from-inventory-to-room [db id]
+  (let [object-id (get (deref inventory-db) id)
+        object-des (get objects object-id)]
+    (cond
+     (contains? (deref inventory-db) id)
+      (do
+       (println "Removed" object-des "from your bag")
+       (add-item-to-room db object-id)
+       (remove-item-from-room inventory-db id))
+     :else (println "You are not carrying that item!"))))

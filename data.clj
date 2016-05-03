@@ -128,3 +128,13 @@
        (add-item-to-room db object-id)
        (remove-item-from-room inventory-db id))
      :else (println "You are not carrying that item!"))))
+
+
+(defn move-object [input-db output-db id]
+  (let [object-id (get (deref input-db) id)
+        object-des (get objects object-id)]
+    (if (contains? (deref input-db) id)
+       (do
+         (add-item-to-room output-db object-id)
+         (remove-item-from-room input-db id))
+       )))

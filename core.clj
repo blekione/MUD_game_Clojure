@@ -1,5 +1,6 @@
 (ns fun-pro.core
-  (require [fun-pro.data :refer :all]))
+  (require [fun-pro.data :refer :all])
+  (require [fun-pro.objects :refer :all]))
 (require ['clojure.string :as 'string])
 
 
@@ -42,6 +43,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn startgame-1 [initial-id]
+  ;; create databases and populate them with items
+  (create-object-db descriptions)
+  (for [x (range 1 (count descriptions))]
+    (add-items (symbol (str ("room" x "-db")))))
   (loop [id initial-id description true]
     (if description
       (println (str (clojure.string/join " "(get descriptions id)) "> ") ))
@@ -54,7 +59,10 @@
                    (= response :look)
                      (get-directions id) 
                    (= response :quit)
-                     "So Long, and Thanks for All the Fish...>")]
+                     "So Long, and Thanks for All the Fish...>"
+                   (= response :pick)
+                     "pick up the item")]
+
         (if (not= reply nil)
           (println reply))
         (cond 

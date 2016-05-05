@@ -15,11 +15,12 @@
 ;;;;; function to create mutable references (atom) to vector for each room
 
 (defn create-object-db [input-coll]
-  (loop [x 1]
-    (intern *ns* (symbol (str "room" x "-db")) (atom []) )
-    (if (< x (count input-coll))
-      (recur (+ x 1))
-      (intern *ns* (symbol (str "inventory-db")) (atom []) ))))
+  (loop [x 0 my-db '()]
+    (if (<= x (count input-coll))
+      (recur (+ x 1) (conj my-db (atom [])))
+      my-db)))
+
+(def object-dbs (create-object-db descriptions))
 
 
 ;;;;; functions to adds/remove objects to db
@@ -52,7 +53,7 @@
 
 ;;;;; display objects from database
 
-(defn display-objects [db]
+(defn display-items [db]
   (let [data @db
         output-no-first (clojure.string/join ", " (rest data))
         output (if (> (count data) 1)
@@ -63,11 +64,13 @@
 
 ;;;;; moving object between db
 
-(defn move-object [input-db output-db input-str]
+(defn move-item [input-db output-db input-str]
   (let [item (find-item input-str input-db)]
     (if (complement (nil? item))
        (do
          (add-item output-db item)
          (remove-item input-db item))
        )))
+
+
 

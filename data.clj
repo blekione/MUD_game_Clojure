@@ -1,8 +1,8 @@
 (ns fun-pro.data)
 
-(def descriptions {:1 '(You are in the living room)
-                   :2 '(You are in the hallway)
-                   :3 '(You are in a swamp)
+(def descriptions {:1 '(the living room)
+                   :2 '(the hallway)
+                   :3 '(a swamp)
                    })
 
 (def look {:directions :look
@@ -26,11 +26,15 @@
 (def inventory {:inventory :inventory
                 :bag :inventory})
 
+(def room-info {:description :room-info
+                :info :room-info
+                :lost :room-info})
+
 (def decisiontable {:1 {:north :2, :west :3}
                     :2 {:south :1}
                     :3 {}})
 
-(def actions (merge look quit pick put inventory))
+(def actions (merge look quit pick put inventory room-info))
 
 ;; merge actions into every record of decisiontable - result is list of maps with single key-value pair
 (def merged-tables

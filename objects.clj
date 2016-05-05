@@ -44,7 +44,6 @@
   (loop [x (rand-int 4) my-objects game-objects ]
     (when (> x 0)
       (let [random-item (rand-nth my-objects)]
-        (print (str "item: " random-item))
         (add-item room-db random-item)
         (recur (- x 1)
                (remove #{random-item} my-objects)))

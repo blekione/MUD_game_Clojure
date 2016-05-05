@@ -43,13 +43,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn startgame-1 [initial-id]
-  ;; create databases and populate them with items
-  (create-object-db descriptions)
-  (for [x (range 1 (count descriptions))]
-    (add-items (symbol (str ("room" x "-db")))))
-  (loop [id initial-id description true]
-    (if description
-      (println (str (clojure.string/join " "(get descriptions id)) "> ") ))
+  (let [object-dbs (create-object-db descriptions)] ;; collection of db for objects in rooms and inventory
+    (loop [x (rest object-dbs)] 
+      (if (seq x) 
+        (do
+          (add-items (first x))
+          (recur (rest x)))))
+    (loop [id initial-id description true]
+      (if description
+        (do
+          (println (str (clojure.string/join " "(get descriptions id)) "> ") )
+          (println (display-items (nth object-dbs (Integer/parseInt (name id))))))
+        )
       (let [input (read-line)
             tokens (string/split input #" ")
             response (lookup-clojure id tokens)
@@ -61,8 +66,7 @@
                    (= response :quit)
                      "So Long, and Thanks for All the Fish...>"
                    (= response :pick)
-                     "pick up the item")]
-
+                     (move-item (nth object-dbs (Integer/parseInt (name id))) (first object-dbs) input))]
         (if (not= reply nil)
           (println reply))
         (cond 
@@ -70,4 +74,5 @@
               (recur response true)
             (not= response :quit)
               (recur id false))
-        )))
+        )))  
+  )

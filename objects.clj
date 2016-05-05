@@ -59,7 +59,7 @@
                  (str output-no-first " and " (first data))
                  (first data))]
     (when (not-empty output)
-      (println (str output)))))
+      (str output))))
 
 ;;;;; moving object between db
 

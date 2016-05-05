@@ -50,11 +50,14 @@
           (add-items (first x))
           (recur (rest x)))))
     (loop [id initial-id description true]
-      (if description
-        (do
-          (println (str (clojure.string/join " "(get descriptions id)) "> ") )
-          (println (display-items (nth object-dbs (Integer/parseInt (name id))))))
-        )
+      (let [room-db (nth object-dbs (Integer/parseInt (name id)))
+            inventory-db (first object-dbs)]
+        (if description
+          (do
+            (println (str (clojure.string/join " "(get descriptions id)) "> "))
+            (if (not-empty @room-db)
+              (println (str "Yoo can see " (display-items room-db)))
+              (println "It seems like nothing interesting is here"))))
       (let [input (read-line)
             tokens (string/split input #" ")
             response (lookup-clojure id tokens)
@@ -66,7 +69,7 @@
                    (= response :quit)
                      "So Long, and Thanks for All the Fish...>"
                    (= response :pick)
-                     (move-item (nth object-dbs (Integer/parseInt (name id))) (first object-dbs) input))]
+                     (move-item room-db inventory-db input))]
         (if (not= reply nil)
           (println reply))
         (cond 
@@ -74,5 +77,6 @@
               (recur response true)
             (not= response :quit)
               (recur id false))
-        )))  
+        ))
+      ))  
   )

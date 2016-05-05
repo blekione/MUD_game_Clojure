@@ -13,7 +13,7 @@
         result (filter #(check-if-direction (first %)) record)
         n (count result)]
     (case n
-      0 (println "You appear to have entered a room with no exits.>")
+      0 (println "It appears you have entered a room with no exits.>")
       1 (println (format "You can see an exit to the %s>" (name (first (first result)))))
       (let [lst-of-keywords (map first result)
             lst-of-strings (map name lst-of-keywords)]
@@ -54,13 +54,15 @@
             inventory-db (first object-dbs)]
         (if description
           (do
-            (println (str (clojure.string/join " "(get descriptions id)) "> "))
+            (println (str "You are in "(clojure.string/join " "(get descriptions id)) "> "))
             (if (not-empty @room-db)
               (println (str "Yoo can see " (display-items room-db)))
               (println "It seems like nothing interesting is here"))))
       (let [input (read-line)
             tokens (string/split input #" ")
             response (lookup-clojure id tokens)
+            room-item (find-item input room-db)
+            inventory-item (find-item input inventory-db)
             reply (cond
                    (= response :false)
                      "I dont understand>"            
@@ -69,12 +71,34 @@
                    (= response :quit)
                      "So Long, and Thanks for All the Fish...>"
                    (= response :pick)
-                     (move-item room-db inventory-db input))]
+                     (if (nil? room-item)
+                       (println "I can't see such an item in the room")
+                       (do
+                         (move-item room-db inventory-db input)
+                         (println (str "You picked " room-item " to your bag")))
+                       )
+                   (= response :drop)
+                     (if (nil? inventory-item)
+                       (println "I can't find such an item in your bag")
+                       (do
+                         (move-item inventory-db room-db input)
+                         (println (str
+                                   "You dropped "
+                                   inventory-item " in "
+                                   (clojure.string/join " " (get descriptions id))))))
+                   (= response :inventory)
+                     (if (empty? @inventory-db)
+                       (println "Your bag is empty")
+                       (println (str "You have " (display-items inventory-db) " in your bag")))
+                   
+                     )]
         (if (not= reply nil)
           (println reply))
         (cond 
             (number? (String->Number (name response)))
               (recur response true)
+            (= response :room-info)
+              (recur id true)
             (not= response :quit)
               (recur id false))
         ))

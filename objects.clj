@@ -42,7 +42,7 @@
 
 (defn add-items [room-db]
   (loop [x (rand-int 4) my-objects game-objects ]
-    (when (> x 0)
+    (when (>= x 0)
       (let [random-item (rand-nth my-objects)]
         (add-item room-db random-item)
         (recur (- x 1)

@@ -44,11 +44,13 @@
 
 (defn startgame-1 [initial-id]
   (let [object-dbs (create-object-db descriptions)] ;; collection of db for objects in rooms and inventory
+;; adds random objects to each room
     (loop [x (rest object-dbs)] 
       (if (seq x) 
         (do
           (add-items (first x))
           (recur (rest x)))))
+;; based on user input perform action and display message
     (loop [id initial-id description true]
       (let [room-db (nth object-dbs (Integer/parseInt (name id)))
             inventory-db (first object-dbs)]
@@ -92,11 +94,11 @@
         (if (not= reply nil)
           (println reply))
         (cond 
-            (number? (String->Number (name response)))
+            (number? (String->Number (name response))) ;; change room
               (recur response true)
-            (= response :room-info)
+            (= response :room-info) ;; display message about room
               (recur id true)
-            (not= response :quit)
+            (not= response :quit) ;; perform action
               (recur id false))
         ))
       ))  

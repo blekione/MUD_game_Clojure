@@ -2,7 +2,7 @@
 
 (def descriptions {:1 '(the old church)
                    :2 '(the dungeon)
-                   :3 '(the cemantary)
+                   :3 '(the cemetery)
                    :4 '(the dark garden)
                    :5 '(the dungeon)
                    :6 '(a swamp)

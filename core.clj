@@ -75,8 +75,7 @@
                        (println "I can't see such an item in the room")
                        (do
                          (move-item room-db inventory-db input)
-                         (println (str "You picked " room-item " to your bag")))
-                       )
+                         (println (str "You picked " room-item " to your bag"))))
                    (= response :drop)
                      (if (nil? inventory-item)
                        (println "I can't find such an item in your bag")
@@ -89,9 +88,7 @@
                    (= response :inventory)
                      (if (empty? @inventory-db)
                        (println "Your bag is empty")
-                       (println (str "You have " (display-items inventory-db) " in your bag")))
-                   
-                     )]
+                       (println (str "You have " (display-items inventory-db) " in your bag"))))]
         (if (not= reply nil)
           (println reply))
         (cond 

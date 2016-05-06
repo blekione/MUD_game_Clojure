@@ -1,8 +1,13 @@
 (ns fun-pro.data)
 
-(def descriptions {:1 '(the living room)
-                   :2 '(the hallway)
-                   :3 '(a swamp)
+(def descriptions {:1 '(the old church)
+                   :2 '(the dungeon)
+                   :3 '(the cemantary)
+                   :4 '(the dark garden)
+                   :5 '(the dungeon)
+                   :6 '(a swamp)
+                   :7 '(the haunting house)
+                   :8 '(the old gold mine)
                    })
 
 (def look {:directions :look
@@ -31,8 +36,13 @@
                 :lost :room-info})
 
 (def decisiontable {:1 {:north :2, :west :3}
-                    :2 {:south :1}
-                    :3 {}})
+                    :2 {:south :1, :north :8}
+                    :3 {:east :1, :north :4}
+                    :4 {:south :3, :west :5}
+                    :5 {:east :4, :north :6}
+                    :6 {:east :7}
+                    :7 {:west :6, :east :8}
+                    :8 {:west :7, :south :2}})
 
 (def actions (merge look quit pick put inventory room-info))
 
